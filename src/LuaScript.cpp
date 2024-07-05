@@ -7,7 +7,7 @@
 
 
 RTTI_BEGIN_CLASS(nap::LuaScript)
-    RTTI_PROPERTY_FILELINK("Path", &nap::LuaScript::mPath, nap::rtti::EPropertyMetaData::Required, nap::rtti::EPropertyFileType::Any) // Any, for now (?)
+    RTTI_PROPERTY_FILELINK("Path", &nap::LuaScript::mPath, nap::rtti::EPropertyMetaData::Required, nap::rtti::EPropertyFileType::Any)
 RTTI_END_CLASS
 
 
