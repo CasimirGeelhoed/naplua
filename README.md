@@ -1,2 +1,2 @@
 # naplua
-Lua module for NAP Framework
+Lua module for [NAP Framework](https://github.com/napframework/nap).
