@@ -3,10 +3,10 @@
 This is a [NAP Framework](https://github.com/napframework/nap) module that embeds a [Lua](https://www.lua.org/) script as a NAP resource.
 Each LuaScript resource manages a distinct LuaState, to which C++ functions and types can be exposed and from which variables can be read and functions can be called. It works great with real-time editing.
 
-_Note: this is only tested and maintained on MacOS (Intel). Windows/Linux support will come later._	
+_Note: for now, this is only tested and maintained on MacOS (Intel). Windows/Linux could come later._	
 
 # Usage:
-## Lua > C++
+## Lua to C++
 		
 Example Lua Script:
 
