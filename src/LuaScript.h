@@ -29,6 +29,7 @@ namespace nap
         
         bool mValid = false; /// < Indicates whether the currently loaded script is valid or has a syntax error.
         
+				
 		/**
 		 * Convenience function. Returns a variable value, if it didn't succeed it logs an error and returns a default constructed object.
 		 */
@@ -131,7 +132,13 @@ namespace nap
 		}
 		
 		try {
-			returnValue = func(args...)[0].template cast<ReturnType>().value();
+			auto result = func(args...);
+			if(result.size() == 0)
+			{
+				errorState.fail("Error calling Lua function \"%s\": Function didn't return", identifier.c_str());
+				return false;
+			}
+			returnValue = result[0].template cast<ReturnType>().value();
 		}
 		catch (std::exception const& e)
 		{
