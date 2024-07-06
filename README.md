@@ -5,7 +5,7 @@ Each LuaScript resource manages a distinct LuaState, to which C++ functions and 
 
 _Note: for now, this is only tested and maintained on MacOS (Intel). Windows/Linux could come later._	
 
-# Usage:
+# Usage examples
 ## Lua to C++
 		
 Example Lua Script:
@@ -47,19 +47,27 @@ if(!mLuaScript->call("add", e, output, inputA, inputB))
 ```
 ## C++ to Lua
 		
-		
-Example C++ function:
+Exposing a C++ function to Lua:
 
 ```
-  float CppAdd(float a, float b)
+mLuaScript->getNamespace().addFunction("CppFunc", &CppFunc);
+```
+
+Exposing a C++ member function to Lua (by wrapping the function in a lambda):
+
+```
+  float MyClass::CppMemberFunc(float a, float b)
   {
     return a + b;
   }
 ```
-Exposing a C++ function to Lua:
+
 ```
-mLuaScript->getNamespace().addFunction("CppAdd", &CppAdd);
+mLuaScript->getNamespace().addFunction("CppMemberFunc", [&](float a, float b) { return CppMemberFunc(a, b); });
 ```
 
-Exposing custom C++ types to Lua: see the function LuaScript::bindBasicTypes for examples.
+
+
+Exposing custom C++ types to Lua: 
+See the function LuaScript::bindBasicTypes for examples.
 
