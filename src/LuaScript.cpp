@@ -7,47 +7,47 @@
 
 
 RTTI_BEGIN_CLASS(nap::LuaScript)
-    RTTI_PROPERTY_FILELINK("Path", &nap::LuaScript::mPath, nap::rtti::EPropertyMetaData::Required, nap::rtti::EPropertyFileType::Any)
+	RTTI_PROPERTY_FILELINK("Path", &nap::LuaScript::mPath, nap::rtti::EPropertyMetaData::Required, nap::rtti::EPropertyFileType::Any)
 RTTI_END_CLASS
 
 
 namespace nap
 {
 
-    bool LuaScript::init(utility::ErrorState& errorState)
-    {
+	bool LuaScript::init(utility::ErrorState& errorState)
+	{
 		// read file to string
-        std::string scriptString;
-        if (!utility::readFileToString(mPath, scriptString, errorState))
-            return false;
-        
+		std::string scriptString;
+		if (!utility::readFileToString(mPath, scriptString, errorState))
+			return false;
+		
 		// create Lua state
-        L = luaL_newstate();
+		L = luaL_newstate();
 		
 		// add libraries
-        luaL_openlibs(L);
-        
-        // enable exceptions
-        luabridge::LuaException::enableExceptions(L);
+		luaL_openlibs(L);
+		
+		// enable exceptions
+		luabridge::LuaException::enableExceptions(L);
 		
 		// bind basic types
 		bindBasicTypes();
-        
+		
 		// load script
 		int r = luaL_dostring(L, scriptString.c_str());
-        if (r == LUA_OK)
-        {
-            mValid = true;
-        }
-        else
-        {
-            mValid = false;
-            Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
-        }
-        
+		if (r == LUA_OK)
+		{
+			mValid = true;
+		}
+		else
+		{
+			mValid = false;
+			Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
+		}
+		
 		// return (we also return true if the script is invalid, allowing the user to fix it while the app is running)
-        return true;
-    }
+		return true;
+	}
 
 
 	struct VecHelper
@@ -57,7 +57,7 @@ namespace nap
 		{
 			return (*vec)[index];
 		}
-
+		
 		template <unsigned index>
 		static void set (glm::vec3* vec, float value)
 		{
@@ -67,7 +67,7 @@ namespace nap
 		static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
 			return l + r;
 		}
-
+		
 		static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
 			return l - r;
 		}
@@ -75,7 +75,7 @@ namespace nap
 		static glm::vec3 mul(const glm::vec3& v, float scalar) {
 			return v * scalar;
 		}
-
+		
 		static glm::vec3 div(const glm::vec3& v, float scalar) {
 			return v / scalar;
 		}
