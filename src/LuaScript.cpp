@@ -16,7 +16,7 @@ namespace nap
 
     bool LuaScript::init(utility::ErrorState& errorState)
     {
-        
+		// read file to string
         std::string scriptString;
         if (!utility::readFileToString(mPath, scriptString, errorState))
             return false;
@@ -33,7 +33,7 @@ namespace nap
 		// bind basic types
 		bindBasicTypes();
         
-		// load script (we still return true if the script is invalid, allowing the user to fix it while the app is running))
+		// load script
 		int r = luaL_dostring(L, scriptString.c_str());
         if (r == LUA_OK)
         {
@@ -45,6 +45,7 @@ namespace nap
             Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
         }
         
+		// return (we also return true if the script is invalid, allowing the user to fix it while the app is running)
         return true;
     }
 
@@ -62,6 +63,23 @@ namespace nap
 		{
 			(*vec)[index] = value;
 		}
+		
+		static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
+			return l + r;
+		}
+
+		static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
+			return l - r;
+		}
+		
+		static glm::vec3 mul(const glm::vec3& v, float scalar) {
+			return v * scalar;
+		}
+
+		static glm::vec3 div(const glm::vec3& v, float scalar) {
+			return v / scalar;
+		}
+		
 	};
 
 
@@ -73,6 +91,10 @@ namespace nap
 		.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
 		.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
 		.addProperty ("z", &VecHelper::get<2>, &VecHelper::set<2>)
+		.addFunction("__add", &VecHelper::add)
+		.addFunction("__sub", &VecHelper::sub)
+		.addFunction("__mul", &VecHelper::mul)
+		.addFunction("__div", &VecHelper::div)
 		.endClass();
 	}
 
