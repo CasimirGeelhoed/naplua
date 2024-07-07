@@ -4,5 +4,12 @@
     "RequiredModules": [
         "napmath"
     ],
-    "WindowsDllSearchPaths": []
+    "WindowsDllSearchPaths": [],
+	"LibrarySearchPaths": {
+		"Linux": [],
+		"macOS": [
+			"{ROOT}/system_modules/naplua/thirdparty/lua52/macos/lib"
+		],
+		"Windows": []
+	}
 }
