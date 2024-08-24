@@ -2,7 +2,7 @@ include(${NAP_ROOT}/cmake/nap_utilities.cmake)
 
 project(lua52)
 
-set(platform_dir ${CMAKE_CURRENT_SOURCE_DIR}/${NAP_THIRDPARTY_PLATFORM_DIR})
+set(platform_dir ${CMAKE_CURRENT_SOURCE_DIR}/${NAP_THIRDPARTY_PLATFORM_DIR}/${ARCH})
 set(include_dir ${platform_dir}/include)
 set(lib_dir ${platform_dir}/lib)
 

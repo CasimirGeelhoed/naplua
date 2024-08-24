@@ -1,0 +1,31 @@
+
+
+To create a universal Lua dylib:
+
+1.
+Get the Lua source code
+
+2.
+cd to /src, then execute the following commands to build a dylib:
+
+make macosx
+rm luac.o
+rm lua.o
+g++ -dynamiclib -undefined suppress *.o -o lua.dylib
+
+
+3.
+Do the above on both x86_64 and arm machines.
+
+4.
+Merge the two dylibs using:
+
+lipo dylib1 dylib2 -output combinedDylib -create
+
+5.
+Replace the dylib in this directory with the new dylib
+
+
+6. If necessary, set its rpath to @rpath/libraryname.dylib
+(check with 'otool -D mylib', set with 'install_name_tool -id @rpath/my/path mylib'
+

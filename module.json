@@ -8,7 +8,7 @@
 	"LibrarySearchPaths": {
 		"Linux": [],
 		"macOS": [
-			"{ROOT}/system_modules/naplua/thirdparty/lua52/macos/lib"
+			"{ROOT}/system_modules/naplua/thirdparty/lua52/macos/${ARCH}/lib"
 		],
 		"Windows": []
 	}
