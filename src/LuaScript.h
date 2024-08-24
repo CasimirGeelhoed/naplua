@@ -9,13 +9,11 @@ extern "C" {
 	#include <lauxlib.h>
 }
 
-#include <LuaBridge.h>
+#include "LuaBridge/LuaBridge.h"
 
 namespace nap
 {
 
-
-	// TODO: rethink get / call / callVoid naming?
 	/**
 	 * A Resource that manages a single Lua script file.
 	 */
@@ -30,38 +28,40 @@ namespace nap
 		
 		bool init(utility::ErrorState& errorState) override;
 		
-		bool mValid = false; /// < Indicates whether the currently loaded script is valid or has a syntax error.
+		bool mValid = false; ///< Indicates whether the currently loaded script is valid or has a syntax error.
 		
 		/**
-		 * Convenience function. Returns a variable value, if it didn't succeed it logs an error and returns a default constructed object.
+		 * Returns a variable value, if it didn't succeed it logs an error and returns a default constructed object.
 		 */
 		template <typename T>
-		T get(const std::string& identifier);
-		
-		/**
-		 * Convenience function. Calls a function and returns its return value, if it didn't succeed it logs an error and returns a default constructed object.
-		 */
-		template <typename T, typename... Args>
-		T call(const std::string& identifier, Args... args);
-		
-		/**
-		 * Convenience function. Calls a function without return value, if it didn't succeed it logs an error.
-		 */
-		template <typename... Args>
-		void callVoid(const std::string& identifier, Args... args);
+		T getVariable(const std::string& identifier);
 		
 		/**
 		 * Gets a Lua variable. Returns whether it succeeded.
 		 */
 		template <typename T>
-		bool get(const std::string& identifier, utility::ErrorState& errorState, T& value);
+		bool getVariable(const std::string& identifier, utility::ErrorState& errorState, T& value);
+
+		
+		/**
+		 * Calls a function and returns its return value, if it didn't succeed it logs an error and returns a default constructed object.
+		 */
+		template <typename T, typename... Args>
+		T call(const std::string& identifier, Args... args);
 		
 		/**
 		 * Calls a Lua function with a single return value. Returns whether it succeeded.
 		 */
 		template <typename ReturnType, typename... Args>
 		bool call(const std::string& identifier, utility::ErrorState& errorState, ReturnType& returnValue, Args&... args);
+
 		
+		/**
+		 * Calls a function without return value, if it didn't succeed it logs an error.
+		 */
+		template <typename... Args>
+		void callVoid(const std::string& identifier, Args... args);
+				
 		/**
 		 * Calls a Lua function without return value. Returns whether it succeeded.
 		 */
@@ -85,13 +85,37 @@ namespace nap
 
 
 	template <typename T>
-	T LuaScript::get(const std::string& identifier)
+	T LuaScript::getVariable(const std::string& identifier)
 	{
 		utility::ErrorState e;
 		T x;
 		if(!get(identifier, e, x))
 			Logger::info(e.toString());
 		return x;
+	}
+
+
+	template <typename T>
+	bool LuaScript::getVariable(const std::string& identifier, utility::ErrorState& errorState, T& value)
+	{
+		luabridge::LuaRef var = luabridge::getGlobal(L, identifier.c_str());
+		if(var.isNil())
+		{
+			errorState.fail("Error getting Lua variable \"%s\": %s", identifier.c_str(), lua_tostring(L, -1));
+			return false;
+		}
+		
+		try 
+		{
+			value = var.template cast<T>().value();
+		}
+		catch (std::exception const& e)
+		{
+			errorState.fail("Error getting Lua variable \"%s\": %s", identifier.c_str(), e.what());
+			return false;
+		}
+		
+		return true;
 	}
 
 
@@ -106,39 +130,6 @@ namespace nap
 	}
 
 
-	template <typename... Args>
-	void LuaScript::callVoid(const std::string& identifier, Args... args)
-	{
-		utility::ErrorState e;
-		if(!callVoid(identifier, e, args...))
-			Logger::info(e.toString());
-	}
-
-
-	template <typename T>
-	bool LuaScript::get(const std::string& identifier, utility::ErrorState& errorState, T& value)
-	{
-		luabridge::LuaRef var = luabridge::getGlobal(L, identifier.c_str());
-		if(var.isNil())
-		{
-			errorState.fail("Error getting Lua variable \"%s\": %s", identifier.c_str(), lua_tostring(L, -1));
-			return false;
-		}
-		
-		try {
-			value = var.template cast<T>().value();
-		}
-		catch (std::exception const& e)
-		{
-			errorState.fail("Error getting Lua variable \"%s\": %s", identifier.c_str(), e.what());
-			return false;
-		}
-		
-		return true;
-		
-	}
-
-
 	template <typename ReturnType, typename ...Args>
 	bool LuaScript::call(const std::string& identifier, utility::ErrorState& errorState, ReturnType& returnValue, Args&... args)
 	{
@@ -150,7 +141,8 @@ namespace nap
 			return false;
 		}
 		
-		try {
+		try
+		{
 			auto result = func(args...);
 			if(result.size() == 0)
 			{
@@ -166,8 +158,17 @@ namespace nap
 		}
 		
 		return true;
-		
 	}
+
+
+	template <typename... Args>
+	void LuaScript::callVoid(const std::string& identifier, Args... args)
+	{
+		utility::ErrorState e;
+		if(!callVoid(identifier, e, args...))
+			Logger::info(e.toString());
+	}
+
 
 	template <typename ...Args>
 	bool LuaScript::callVoid(const std::string& identifier, utility::ErrorState& errorState, Args&... args)
@@ -180,7 +181,8 @@ namespace nap
 			return false;
 		}
 		
-		try {
+		try
+		{
 			func(args...);
 		}
 		catch (std::exception const& e)
@@ -190,7 +192,6 @@ namespace nap
 		}
 		
 		return true;
-		
 	}
 
 }
