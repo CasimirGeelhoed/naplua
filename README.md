@@ -1,9 +1,9 @@
 # naplua
 
-This is a [NAP Framework](https://github.com/napframework/nap) module that embeds a [Lua](https://www.lua.org/) script as a NAP resource.
+This is a [NAP Framework](https://github.com/napframework/nap) module that embeds a [Lua](https://www.lua.org/) script as a NAP resource using [LuaBridge3](https://github.com/kunitoki/LuaBridge3).
 Each LuaScript resource manages a distinct LuaState, to which C++ functions and types can be exposed and from which variables can be read and functions can be called. It works great with real-time editing.
 
-_Note: for now, this is only tested and maintained on MacOS (Intel). Windows/Linux could come later._	
+_MacOS (Intel) & MacOS (Silicon) are supported._	
 
 # Usage examples
 ## Lua to C++
@@ -20,14 +20,14 @@ end
 				
 Getting a variable value from Lua (printing an error if it fails):
 ```
-int x = mLuaScript->get<int>("x");
+int x = mLuaScript->getVariable<int>("x");
 ```
 
 Getting a value from Lua, with ErrorState:
 ```
 utility::ErrorState e;
 int x;
-if(!mLuaScript->get("x", e, x))
+if(!mLuaScript->getVariable("x", e, x))
   Logger::info(e.toString());
 ```
 
@@ -69,5 +69,5 @@ mLuaScript->getNamespace().addFunction("CppMemberFunc", [&](float a, float b) { 
 
 
 Exposing custom C++ types to Lua: 
-See the function LuaScript::bindBasicTypes for examples.
 
+_See the function LuaScript::bindBasicTypes for examples._
