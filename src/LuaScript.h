@@ -21,6 +21,10 @@ namespace nap
 
 	/**
 	 * A Resource that manages a single Lua script file.
+	 * Usage:
+	 * 1. bind custom types and functions to the luabridge::Namespace
+	 * 2. call load() to load/execute the script with the given bindings
+	 * 3. now that the script is loaded, you can call functions and get variables from the script
 	 */
 	class NAPAPI LuaScript : public Resource
 	{
@@ -34,6 +38,13 @@ namespace nap
 		bool init(utility::ErrorState& errorState) override;
 		
 		bool mValid = false; ///< Indicates whether the currently loaded script is valid or has a syntax error.
+		
+		/**
+		 * Loads the script.
+		 * @param erorrState contains the error if loading the script fails
+		 * @return whether loading the script succeeded
+		 */
+		bool load(utility::ErrorState& errorState);
 		
 		/**
 		 * Returns a variable value, if it didn't succeed it logs an error and returns a default constructed object.
@@ -100,7 +111,7 @@ namespace nap
 		luabridge::Namespace getNamespace() { return luabridge::getGlobalNamespace(L); }
 		
 	private:
-		void bindBasicTypes();
+		std::string mScriptAsString;
 		
 		lua_State* L = nullptr;
 		

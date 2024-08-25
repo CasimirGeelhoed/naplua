@@ -18,86 +18,36 @@ namespace nap
 
 	bool LuaScript::init(utility::ErrorState& errorState)
 	{
-		// read file to string
-		std::string scriptString;
-		if (!utility::readFileToString(mPath, scriptString, errorState))
+		// Read file to string.
+		if (!utility::readFileToString(mPath, mScriptAsString, errorState))
 			return false;
 		
-		// create Lua state
+		// Create Lua state.
 		L = luaL_newstate();
 		
-		// add libraries
+		// Add libraries.
 		luaL_openlibs(L);
 		
-		// enable exceptions
+		// Enable exceptions.
 		luabridge::LuaException::enableExceptions(L);
-		
-		// bind basic types
-		bindBasicTypes();
-		
-		// load script
-		int r = luaL_dostring(L, scriptString.c_str());
-		if (r == LUA_OK)
-		{
-			mValid = true;
-		}
-		else
-		{
-			mValid = false;
-			Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
-		}
-		
-		// return (also return true if the script is invalid, allowing the user to fix the script while the app is running)
+				
 		return true;
 	}
-
-
-	struct VecHelper
+	
+	
+	bool LuaScript::load(utility::ErrorState& errorState)
 	{
-		template <unsigned index>
-		static float get (glm::vec3 const* vec)
+		// Load the script.
+		int r = luaL_dostring(L, mScriptAsString.c_str());
+		if (r != LUA_OK)
 		{
-			return (*vec)[index];
+			mValid = false;
+			errorState.fail("Lua script invalid: %s", lua_tostring(L, -1));
+			return false;
 		}
 		
-		template <unsigned index>
-		static void set (glm::vec3* vec, float value)
-		{
-			(*vec)[index] = value;
-		}
-		
-		static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
-			return l + r;
-		}
-		
-		static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
-			return l - r;
-		}
-		
-		static glm::vec3 mul(const glm::vec3& v, float scalar) {
-			return v * scalar;
-		}
-		
-		static glm::vec3 div(const glm::vec3& v, float scalar) {
-			return v / scalar;
-		}
-		
-	};
-
-
-	void LuaScript::bindBasicTypes()
-	{
-		// bind glm::vec3
-		getNamespace().beginClass<glm::vec3>("vec3")
-		.addConstructor<void(*)(float, float, float)>()
-		.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
-		.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
-		.addProperty ("z", &VecHelper::get<2>, &VecHelper::set<2>)
-		.addFunction("__add", &VecHelper::add)
-		.addFunction("__sub", &VecHelper::sub)
-		.addFunction("__mul", &VecHelper::mul)
-		.addFunction("__div", &VecHelper::div)
-		.endClass();
+		mValid = true;
+		return true;
 	}
 
 }
