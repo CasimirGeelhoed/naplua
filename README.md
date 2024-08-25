@@ -71,51 +71,51 @@ mLuaScript->getNamespace().addFunction("CppMemberFunc", [&](float a, float b) { 
 The below example binds the glm::vec3 Lua, using static functions to define getters / setters and arithemtic operators. For more information, see the [LuaBridge3 manual](https://github.com/kunitoki/LuaBridge3/blob/master/Manual.md).
 
 ```
-	struct VecHelper
+struct VecHelper
+{
+	template <unsigned index>
+	static float get (glm::vec3 const* vec)
 	{
-		template <unsigned index>
-		static float get (glm::vec3 const* vec)
-		{
-			return (*vec)[index];
-		}
-		
-		template <unsigned index>
-		static void set (glm::vec3* vec, float value)
-		{
-			(*vec)[index] = value;
-		}
-		
-		static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
-			return l + r;
-		}
-		
-		static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
-			return l - r;
-		}
-		
-		static glm::vec3 mul(const glm::vec3& v, float scalar) {
-			return v * scalar;
-		}
-		
-		static glm::vec3 div(const glm::vec3& v, float scalar) {
-			return v / scalar;
-		}
-		
-	};
-
-
-	void LuaScript::bindBasicTypes()
-	{
-		// bind glm::vec3
-		getNamespace().beginClass<glm::vec3>("vec3")
-		.addConstructor<void(*)(float, float, float)>()
-		.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
-		.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
-		.addProperty ("z", &VecHelper::get<2>, &VecHelper::set<2>)
-		.addFunction("__add", &VecHelper::add)
-		.addFunction("__sub", &VecHelper::sub)
-		.addFunction("__mul", &VecHelper::mul)
-		.addFunction("__div", &VecHelper::div)
-		.endClass();
+		return (*vec)[index];
 	}
+	
+	template <unsigned index>
+	static void set (glm::vec3* vec, float value)
+	{
+		(*vec)[index] = value;
+	}
+	
+	static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
+		return l + r;
+	}
+	
+	static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
+		return l - r;
+	}
+	
+	static glm::vec3 mul(const glm::vec3& v, float scalar) {
+		return v * scalar;
+	}
+	
+	static glm::vec3 div(const glm::vec3& v, float scalar) {
+		return v / scalar;
+	}
+	
+};
+
+
+void LuaScript::bindBasicTypes()
+{
+	// bind glm::vec3
+	getNamespace().beginClass<glm::vec3>("vec3")
+	.addConstructor<void(*)(float, float, float)>()
+	.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
+	.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
+	.addProperty ("z", &VecHelper::get<2>, &VecHelper::set<2>)
+	.addFunction("__add", &VecHelper::add)
+	.addFunction("__sub", &VecHelper::sub)
+	.addFunction("__mul", &VecHelper::mul)
+	.addFunction("__div", &VecHelper::div)
+	.endClass();
+}
 ```
