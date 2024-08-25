@@ -9,11 +9,9 @@
 
 #include <glm/glm.hpp>
 
-
 RTTI_BEGIN_CLASS(nap::LuaScript)
 	RTTI_PROPERTY_FILELINK("Path", &nap::LuaScript::mPath, nap::rtti::EPropertyMetaData::Required, nap::rtti::EPropertyFileType::Any)
 RTTI_END_CLASS
-
 
 namespace nap
 {
@@ -49,7 +47,7 @@ namespace nap
 			Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
 		}
 		
-		// return (we also return true if the script is invalid, allowing the user to fix the script while the app is running)
+		// return (also return true if the script is invalid, allowing the user to fix the script while the app is running)
 		return true;
 	}
 
