@@ -1,4 +1,3 @@
-
 #include "LuaScript.h"
 
 #include <utility/fileutils.h>
@@ -45,7 +44,7 @@ namespace nap
 			Logger::info("Lua script invalid: %s", lua_tostring(L, -1));
 		}
 		
-		// return (we also return true if the script is invalid, allowing the user to fix it while the app is running)
+		// return (we also return true if the script is invalid, allowing the user to fix the script while the app is running)
 		return true;
 	}
 
