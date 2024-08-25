@@ -68,7 +68,7 @@ mLuaScript->getNamespace().addFunction("CppMemberFunc", [&](float a, float b) { 
 
 #### Exposing custom C++ types to Lua: 
 
-The below example binds the glm::vec3 Lua, using static functions to define getters / setters and arithemtic operators. For more information, see the [LuaBridge3 manual](https://github.com/kunitoki/LuaBridge3/blob/master/Manual.md).
+The below example binds the glm::vec3 to Lua, using static functions to define getters / setters and arithmetic operators. For more information, see the [LuaBridge3 manual](https://github.com/kunitoki/LuaBridge3/blob/master/Manual.md).
 
 ```
 struct VecHelper
