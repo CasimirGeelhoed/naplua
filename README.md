@@ -8,22 +8,16 @@ _MacOS (Intel) & MacOS (Silicon) are supported._
 # Usage examples
 ## Lua to C++
 		
-Example Lua Script:
 
+#### Getting a variable value from Lua:
 ```
 x = 123
-		 
-function add(a, b)
-  return a + b
-end
 ```
-				
-Getting a variable value from Lua (printing an error if it fails):
+Getting the variable (logs an error if it fails):
 ```
 int x = mLuaScript->getVariable<int>("x");
 ```
-
-Getting a value from Lua, with ErrorState:
+Getting the variable while checking if it exists:
 ```
 utility::ErrorState e;
 int x;
@@ -31,29 +25,33 @@ if(!mLuaScript->getVariable("x", e, x))
   Logger::info(e.toString());
 ```
 
-Calling a Lua function and getting its return value back (printing an error if it fails):
+#### Calling a Lua function:
+```
+function add(a, b)
+  return a + b
+end
+```
+Calling the Lua function (logs an error if it fails):
 ```
 int output = mLuaScript->call<int>("add", 3, 4);
 ```
-		
-Calling a Lua function and getting its return value back, with ErrorState:
+Calling the Lua function and getting its return value back, while checking if the function call succeeds:
 ```
-float inputA = 2.0f;
-float inputB = 3.0f;
-float output = 0.f;
+int output = 0;
 utility::ErrorState e;
-if(!mLuaScript->call("add", e, output, inputA, inputB))
+if(!mLuaScript->call("add", e, output, 3, 4))
   Logger::info(e.toString());
 ```
+
 ## C++ to Lua
 		
-Exposing a C++ function to Lua:
+#### Exposing a C++ function to Lua:
 
 ```
 mLuaScript->getNamespace().addFunction("CppFunc", &CppFunc);
 ```
 
-Exposing a C++ member function to Lua (by wrapping the function in a lambda):
+#### Exposing a C++ member function to Lua (by wrapping the function in a lambda):
 
 ```
   float MyClass::CppMemberFunc(float a, float b)
@@ -68,6 +66,56 @@ mLuaScript->getNamespace().addFunction("CppMemberFunc", [&](float a, float b) { 
 
 
 
-Exposing custom C++ types to Lua: 
+#### Exposing custom C++ types to Lua: 
 
-_See the function LuaScript::bindBasicTypes for examples._
+The below example binds the glm::vec3 Lua, using static functions to define getters / setters and arithemtic operators. For more information, see the [LuaBridge3 manual](https://github.com/kunitoki/LuaBridge3/blob/master/Manual.md).
+
+```
+	struct VecHelper
+	{
+		template <unsigned index>
+		static float get (glm::vec3 const* vec)
+		{
+			return (*vec)[index];
+		}
+		
+		template <unsigned index>
+		static void set (glm::vec3* vec, float value)
+		{
+			(*vec)[index] = value;
+		}
+		
+		static glm::vec3 add(const glm::vec3& l, const glm::vec3& r) {
+			return l + r;
+		}
+		
+		static glm::vec3 sub(const glm::vec3& l, const glm::vec3& r) {
+			return l - r;
+		}
+		
+		static glm::vec3 mul(const glm::vec3& v, float scalar) {
+			return v * scalar;
+		}
+		
+		static glm::vec3 div(const glm::vec3& v, float scalar) {
+			return v / scalar;
+		}
+		
+	};
+
+
+	void LuaScript::bindBasicTypes()
+	{
+		// bind glm::vec3
+		getNamespace().beginClass<glm::vec3>("vec3")
+		.addConstructor<void(*)(float, float, float)>()
+		.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
+		.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
+		.addProperty ("z", &VecHelper::get<2>, &VecHelper::set<2>)
+		.addFunction("__add", &VecHelper::add)
+		.addFunction("__sub", &VecHelper::sub)
+		.addFunction("__mul", &VecHelper::mul)
+		.addFunction("__div", &VecHelper::div)
+		.endClass();
+	}
+```
