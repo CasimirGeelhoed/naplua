@@ -104,10 +104,10 @@ struct VecHelper
 };
 
 
-void LuaScript::bindBasicTypes()
+void LuaBindingResource::bindBasicTypes()
 {
 	// bind glm::vec3
-	getNamespace().beginClass<glm::vec3>("vec3")
+	mLuaScript->getNamespace().beginClass<glm::vec3>("vec3")
 	.addConstructor<void(*)(float, float, float)>()
 	.addProperty ("x", &VecHelper::get<0>, &VecHelper::set<0>)
 	.addProperty ("y", &VecHelper::get<1>, &VecHelper::set<1>)
@@ -117,5 +117,10 @@ void LuaScript::bindBasicTypes()
 	.addFunction("__mul", &VecHelper::mul)
 	.addFunction("__div", &VecHelper::div)
 	.endClass();
+
+	// reload Lua script
+	mLuaScript->load();
 }
 ```
+
+Make sure to call these bindings from the init() function of an Object that points to the LuaScript resource, so that the bindings are re-added directly after the LuaScript reloads at runtime.
