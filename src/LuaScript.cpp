@@ -30,7 +30,12 @@ namespace nap
 		
 		// Enable exceptions.
 		luabridge::LuaException::enableExceptions(L);
-				
+		
+		// Load the script.
+		if(!load(errorState))
+			Logger::info(errorState.toString());
+		
+		// If the script was not loaded succesfully, we still return true, allowing the user to fix the script at runtime.
 		return true;
 	}
 	

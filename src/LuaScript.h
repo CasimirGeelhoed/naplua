@@ -40,7 +40,7 @@ namespace nap
 		bool mValid = false; ///< Indicates whether the currently loaded script is valid or has a syntax error.
 		
 		/**
-		 * Loads the script.
+		 * Loads the script. Called automatically during initialisation, but can also be called dynamically (for example, after binding a new C++ type which is used in the script)
 		 * @param erorrState contains the error if loading the script fails
 		 * @return whether loading the script succeeded
 		 */
