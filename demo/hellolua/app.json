@@ -1,0 +1,15 @@
+{
+    "Type": "nap::ProjectInfo",
+    "mID": "ProjectInfo",
+    "Title": "HelloLua",
+    "Version": "1.0.0",
+    "Data": "data/hellolua.json",
+    "PathMapping": "cache/path_mapping.json",
+    "ServiceConfig": "",
+    "RequiredModules": [
+        "napapp",
+        "napimgui",
+        "napcameracontrol",
+		"naplua"
+    ]
+}
