@@ -123,7 +123,7 @@ namespace nap
 	{
 		utility::ErrorState e;
 		T x;
-		if(!get(identifier, e, x))
+		if(!getVariable(identifier, e, x))
 			Logger::info(e.toString());
 		return x;
 	}
