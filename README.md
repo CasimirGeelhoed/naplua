@@ -123,4 +123,4 @@ void LuaBindingResource::bindBasicTypes()
 }
 ```
 
-Make sure to call these bindings from the init() function of an Object that is initialised after the LuaScript resource, so that the bindings are re-added directly after the LuaScript reloads at runtime.
+Make sure to call these bindings from the init() function of an Object that points to the LuaScript resource, so that the bindings are re-added directly after the LuaScript reloads at runtime.
