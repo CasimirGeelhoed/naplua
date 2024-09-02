@@ -6987,7 +6987,8 @@ template <class T, class F, class = std::enable_if<
         !std::is_member_function_pointer_v<F>>>
 void push_member_function(lua_State* L, F&& f, const char* debugname)
 {
-    static_assert(std::is_same_v<T, remove_cvref_t<std::remove_pointer_t<function_argument_or_void_t<0, F>>>>);
+//	Commented out to enable registering member functions with lua_State* argument (in order to implement a vec3.__mul function that works for both float*vec3 & vec3*float).
+//    static_assert(std::is_same_v<T, remove_cvref_t<std::remove_pointer_t<function_argument_or_void_t<0, F>>>>);
 
     lua_newuserdata_aligned<F>(L, std::forward<F>(f));
     lua_pushcclosure_x(L, &invoke_proxy_functor<F>, debugname, 1);
